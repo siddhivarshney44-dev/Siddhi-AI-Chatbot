@@ -1,4 +1,6 @@
 .env
 venv/
-__pycache__/.sessions/
+__pycache__/
+.sessions/
 chat_sessions/
+*.pyc
