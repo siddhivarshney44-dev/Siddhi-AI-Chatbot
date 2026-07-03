@@ -13,10 +13,8 @@ from utils.memory import (
 )
 from utils.rag import chunk_text, build_index, retrieve
 
-# ---------------- CONFIG ----------------
 st.set_page_config(page_title="Siddhi AI Pro", page_icon="🤖", layout="wide")
 
-# ---------------- CSS ----------------
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
@@ -72,7 +70,6 @@ hr { border-color: rgba(255,255,255,0.08); }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- API ----------------
 load_dotenv()
 api_key = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY", None)
 if not api_key:
@@ -91,7 +88,7 @@ def extract_pdf_text(pdf_file):
                 text += extracted
         return text
     except Exception as e:
-        st.sidebar.error(f"PDF read error: {e}")
+        st.sidebar.error(f"PDF extraction error: {e}")
         return ""
 
 
@@ -102,7 +99,6 @@ def stream_reply(response):
             yield delta
 
 
-# ---------------- SESSION STATE ----------------
 if "session_id" not in st.session_state:
     existing = list_sessions()
     st.session_state.session_id = existing[0] if existing else new_session_id()
@@ -111,9 +107,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = load_session(st.session_state.session_id)
 
 if "rag_index" not in st.session_state:
-    st.session_state.rag_index = None  # (vectorizer, matrix, chunks)
+    st.session_state.rag_index = None
 
-# ---------------- SIDEBAR ----------------
 with st.sidebar:
     st.title("⚙ Control Panel")
 
@@ -164,14 +159,12 @@ with st.sidebar:
     c1.metric("Model", "Llama 3.3")
     c2.metric("Status", "🟢 Online")
 
-# ---------------- HEADER ----------------
 st.markdown('<p class="main-title">🤖 Siddhi AI Pro</p>', unsafe_allow_html=True)
 st.markdown(
     '<p class="subtitle">RAG-powered AI assistant with memory, streaming & multi-chat</p>',
     unsafe_allow_html=True
 )
 
-# ---------------- QUICK ACTIONS ----------------
 st.markdown('<p class="section-label">Quick Actions</p>', unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -184,13 +177,11 @@ with col3:
     if st.button("🎯 Career Advice"):
         st.session_state.quick_prompt = "How to become AI engineer?"
 
-# ---------------- CHAT DISPLAY ----------------
 for msg in st.session_state.messages:
     avatar = "🧑" if msg["role"] == "user" else "🤖"
     with st.chat_message(msg["role"], avatar=avatar):
         st.write(msg["content"])
 
-# ---------------- INPUT ----------------
 prompt = st.chat_input("Ask anything...")
 if not prompt and "quick_prompt" in st.session_state:
     prompt = st.session_state.quick_prompt
@@ -203,7 +194,6 @@ system_prompt = {
     "General Assistant": "You are a helpful AI assistant."
 }
 
-# ---------------- RESPONSE ----------------
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
     save_session(st.session_state.session_id, st.session_state.messages)
@@ -243,7 +233,6 @@ if prompt:
     st.session_state.messages.append({"role": "assistant", "content": reply})
     save_session(st.session_state.session_id, st.session_state.messages)
 
-# ---------------- EXPORT ----------------
 chat_export = json.dumps(st.session_state.messages, indent=2)
 st.download_button(
     "📥 Download Chat History",
@@ -252,6 +241,5 @@ st.download_button(
     mime="application/json"
 )
 
-# ---------------- FOOTER ----------------
 st.markdown("---")
 st.caption(f"Built by Siddhi Varshney | {datetime.now().strftime('%d %b %Y')}")

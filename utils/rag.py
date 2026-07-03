@@ -3,7 +3,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def chunk_text(text, chunk_size=120, overlap=20):
-    """Split text into overlapping word chunks for retrieval."""
     words = text.split()
     chunks = []
     start = 0
@@ -17,7 +16,6 @@ def chunk_text(text, chunk_size=120, overlap=20):
 
 
 def build_index(chunks):
-    """Build a TF-IDF index over document chunks."""
     if not chunks:
         return None, None
     vectorizer = TfidfVectorizer(stop_words="english")
@@ -26,7 +24,6 @@ def build_index(chunks):
 
 
 def retrieve(query, vectorizer, matrix, chunks, top_k=3):
-    """Return top-k most relevant chunks for a query."""
     if vectorizer is None or matrix is None:
         return []
     query_vec = vectorizer.transform([query])

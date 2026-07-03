@@ -40,15 +40,3 @@ def save_session(session_id, messages):
 
 def delete_session(session_id):
     try:
-        os.remove(_path(session_id))
-    except Exception:
-        pass
-
-
-def session_title(session_id):
-    messages = load_session(session_id)
-    for m in messages:
-        if m["role"] == "user":
-            title = m["content"].strip()
-            return title[:28] + ("..." if len(title) > 28 else "")
-    return "New Chat"
